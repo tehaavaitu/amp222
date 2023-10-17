@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Ajouter une vérification de longueur minimale pour le nom et la réponse
 if (strlen($name) < 3 || strlen($reponse) < 5) {
-    $erreur = "Le nom et la réponse doivent avoir au moins 3 caractères.";
+    $erreur = "Le nom doit avoir au moins 3 caractères et la réponse au moins 5 caractères.";
 } else {
     if ($num_rows > 0) {
         // Si l'email existe déjà, afficher un message d'erreur
@@ -39,19 +39,20 @@ if (strlen($name) < 3 || strlen($reponse) < 5) {
             $erreur = "Les mots de passe ne correspondent pas.";
         } elseif (!preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/', $password)) {
             // Vérifier les restrictions du mot de passe
-            $erreur = "Le mot de passe ne respecte pas les restrictions demandées. Veuillez inclure au moins une lettre minuscule, une lettre majuscule, un chiffre et avoir une longueur minimale de 8 caractères.";
+            $erreur = "Le mot de passe doit avoir une longueur minimale de 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre.";
         } else {
             // Hasher le mot de passe
             $mdpHash = password_hash($password, PASSWORD_DEFAULT);
 
             // Définir le statut comme "actif" et la date d'inscription
+            $role = "user";
             $status = "actif";
             $date_inscription = date("Y-m-d H:i:s"); // Date actuelle
 
             // Enregistrements dans la table
-            $requete = "INSERT INTO usertable (name, question, reponse, email, password, status, date_inscription) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $requete = "INSERT INTO usertable (name, question, reponse, email, password, role, status, date_inscription) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($connexion, $requete);
-            mysqli_stmt_bind_param($stmt, "sssssss", $name, $question, $reponse, $email, $mdpHash, $status, $date_inscription);
+            mysqli_stmt_bind_param($stmt, "ssssssss", $name, $question, $reponse, $email, $mdpHash, $role, $status, $date_inscription);
 
             if (mysqli_stmt_execute($stmt)) {
                 $message = "Inscription réussie !";
@@ -165,7 +166,6 @@ if (strlen($name) < 3 || strlen($reponse) < 5) {
             </form>
         </div>
     </div>
-
     <script src="assets/js/script.js"></script>
 </body>
 

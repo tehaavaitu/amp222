@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) { // Vérif
   $email = $_POST['email'];
   $password = $_POST['password'];
 
-  // Préparez la requête SQL pour rechercher l'utilisateur par email
+  // Préparez la requête SQL pour rechercher l'utilisateur par email et par rôle
   $sql = "SELECT * FROM usertable WHERE email = ?";
 
   // Utilisez une requête préparée pour éviter les injections SQL
@@ -29,9 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) { // Vérif
       $row = $result->fetch_assoc();
       if (password_verify($password, $row['password'])) {
         // Mot de passe correct, l'utilisateur est authentifié
-        echo 'Connexion réussie. Vous pouvez rediriger l\'utilisateur vers une page d\'administration ici.';
-        // Vous pouvez rediriger l'utilisateur vers une page d'administration ici
-        header('Location: admin.php');
+        if ($row['role'] === 'admin') {
+          // L'utilisateur a le rôle "admin", redirigez-le vers la page admin.php
+          header('Location: admin.php');
+        } elseif ($row['role'] === 'user') {
+          // L'utilisateur a le rôle "user", redirigez-le vers la page new_page.html
+          header('Location: new_page.html');
+        }
         exit;
       } else {
         // Mot de passe incorrect
@@ -39,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) { // Vérif
       }
     } else {
       // Aucun utilisateur trouvé avec cet email
-      $erreur = 'Utilisateur non trouvé. Veuillez vérifier votre email.';
+      $erreur = 'Utilisateur non trouvé. Veuillez vérifier vos identifiants.';
     }
     $stmt->close();
   }

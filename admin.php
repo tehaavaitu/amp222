@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// Vérifier la connexion à la base de données
+include 'includes/inc_Connect.php';
+
 // Vérifier si l'utilisateur est connecté
 if (isset($_SESSION['utilisateur_connecte'])) {
     // Vérifier si la session est inactive depuis plus de 30 minutes  1800
@@ -55,7 +58,7 @@ if (isset($_SESSION['utilisateur_connecte'])) {
         <ul class="navbar-nav ms-auto">
           <li>
             <a class="navbar-brand" href="index.html">
-              <img src="assets/images/logos/logo1.png" class="logo-image img-fluid" alt="amp" />
+              <img src="assets/images/logos/logo1.png" class="logo-image img-fluid" alt="logoamp" />
             </a>
           </li>
           <li class="nav-item">

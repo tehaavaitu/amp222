@@ -99,6 +99,7 @@ function toggleScrollButtonVisibility() {
 }
 
 // FORMULAIRE DE CONTACT
+window.addEventListener("DOMContentLoaded", (event) => {
 document.getElementById("subject").addEventListener("change", function () {
   var selectedOption = this.value;
   if (selectedOption === "Autres") {
@@ -108,6 +109,7 @@ document.getElementById("subject").addEventListener("change", function () {
     document.getElementById("other-details").style.display = "none";
     document.getElementById("message-wrapper").style.display = "block";
   }
+})
 });
 
 // AFFICHAGE MOT DE PASSE
