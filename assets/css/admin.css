@@ -216,8 +216,11 @@ nav ul li a:hover {
     color: var(--secondary-color);
   }
   
-
-  
   .text-container h2 {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+  }
+
+  .logout-image {
+    width: 20px;
+    height: auto;
   }

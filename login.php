@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) { // Vérif
         // Mot de passe correct, l'utilisateur est authentifié
         if ($row['role'] === 'admin') {
           // L'utilisateur a le rôle "admin", redirigez-le vers la page admin.php
-          header('Location: admin.php');
+          header('Location: admin/index.php');
         } elseif ($row['role'] === 'user') {
           // L'utilisateur a le rôle "user", redirigez-le vers la page new_page.html
           header('Location: new_page.html');
