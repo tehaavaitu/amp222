@@ -1,7 +1,7 @@
 <?php
 session_start(); // Démarre la session
 
-// Vérifier la connexion à la base de données
+// Vérifier la connexion à la BDD
 include 'includes/inc_Connect.php';
 
 $cleChiffrement = 'votre_clé_de_chiffrement'; // Assurez-vous d'utiliser la même clé pour le chiffrement et le décryptage
@@ -18,65 +18,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
-    // Vérifier si l'email existe déjà dans la base de données
-    $requete = "SELECT * FROM usertable WHERE email = ?";
-    $stmt = mysqli_prepare($connexion, $requete);
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $num_rows = mysqli_num_rows($result);
+    // Vérifier si l'email existe déjà dans la BDD
+    $requete = "SELECT * FROM usertable WHERE email = :email";
+    $stmt = $connexion->prepare($requete);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Ajouter une vérification de longueur minimale pour le nom et la réponse
-if (strlen($name) < 3 || strlen($reponse) < 5) {
-    $erreur = "Le nom doit avoir au moins 3 caractères et la réponse au moins 5 caractères.";
-} else {
-    if ($num_rows > 0) {
-        // Si l'email existe déjà, afficher un message d'erreur
-        $erreur = "Cet email est déjà utilisé.";
-    } else 
-        // Vérifier si les mots de passe correspondent
-        if ($password !== $confirm_password) {
-            $erreur = "Les mots de passe ne correspondent pas.";
-        } elseif (!preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/', $password)) {
-            // Vérifier les restrictions du mot de passe
-            $erreur = "Le mot de passe doit avoir une longueur minimale de 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre.";
-        } else {
-            // Hasher le mot de passe
-            $mdpHash = password_hash($password, PASSWORD_DEFAULT);
-
-            // Définir le statut comme "actif" et la date d'inscription
-            $role = "user";
-            $status = "actif";
-            $date_inscription = date("Y-m-d H:i:s"); // Date actuelle
-
-            // Enregistrements dans la table
-            $requete = "INSERT INTO usertable (name, question, reponse, email, password, role, status, date_inscription) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = mysqli_prepare($connexion, $requete);
-            mysqli_stmt_bind_param($stmt, "ssssssss", $name, $question, $reponse, $email, $mdpHash, $role, $status, $date_inscription);
-
-            if (mysqli_stmt_execute($stmt)) {
-                $message = "Inscription réussie !";
-
-                // Réinitialiser les champs
-                $name = "";
-                $question = "";
-                $reponse = "";
-                $email = "";
-
-                // Rediriger l'utilisateur vers la page de connexion
-                header("Location: login.php");
-                exit();
+    if (strlen($name) < 3 || strlen($reponse) < 5) {
+        $erreur = "Le nom doit avoir au moins 3 caractères et la réponse au moins 5 caractères.";
+    } else {
+        if ($result) {
+            // Si l'email existe déjà, afficher un message d'erreur
+            $erreur = "Cet email est déjà utilisé.";
+        } else
+            // Vérifier si les mots de passe correspondent
+            if ($password !== $confirm_password) {
+                $erreur = "Les mots de passe ne correspondent pas.";
+            } elseif (!preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/', $password)) {
+                // Vérifier les restrictions du mot de passe
+                $erreur = "Le mot de passe doit avoir une longueur minimale de 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre.";
             } else {
-                $erreur = "Erreur lors de l'inscription : " . mysqli_error($connexion);
+                // Hasher le mot de passe
+                $mdpHash = password_hash($password, PASSWORD_DEFAULT);
+
+                // Définir le statut comme "actif" et la date d'inscription
+                $role = "user";
+                $status = "actif";
+                $date_inscription = date("Y-m-d H:i:s"); // Date actuelle
+
+                // Enregistrements dans la table
+                $requete = "INSERT INTO usertable (name, question, reponse, email, password, role, status, date_inscription) VALUES (:name, :question, :reponse, :email, :password, :role, :status, :date_inscription)";
+                $stmt = $connexion->prepare($requete);
+                $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+                $stmt->bindParam(':question', $question, PDO::PARAM_STR);
+                $stmt->bindParam(':reponse', $reponse, PDO::PARAM_STR);
+                $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+                $stmt->bindParam(':password', $mdpHash, PDO::PARAM_STR);
+                $stmt->bindParam(':role', $role, PDO::PARAM_STR);
+                $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+                $stmt->bindParam(':date_inscription', $date_inscription, PDO::PARAM_STR);
+
+                if ($stmt->execute()) {
+                    $message = "Inscription réussie !";
+
+                    // Réinitialiser les champs
+                    $name = "";
+                    $question = "";
+                    $reponse = "";
+                    $email = "";
+
+                    // Rediriger l'utilisateur vers la page de connexion
+                    header("Location: login.php");
+                    exit();
+                } else {
+                    $erreur = "Erreur lors de l'inscription : " . implode(' ', $stmt->errorInfo());
+                }
             }
-        }
     }
 
-    // Fermer la requête et la connexion à la base de données
-    mysqli_stmt_close($stmt);
-    mysqli_close($connexion);
+    // Fermer la connexion à la BDD
+    $stmt = null;
 }
 ?>
+
 
 
 
@@ -146,7 +152,7 @@ if (strlen($name) < 3 || strlen($reponse) < 5) {
                         </div>
 
                         <div class="input-box">
-                            <input type="password" id="pass" class="password" name="password" autocomplete="off" autofocus required  />
+                            <input type="password" id="pass" class="password" name="password" autocomplete="off" autofocus required />
                             <img src="assets/images/logos/redEye.png" id="eyepass" onClick="changer('pass')" />
                             <label>Mot de passe</label>
                         </div>

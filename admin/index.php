@@ -1,25 +1,29 @@
 <?php
 session_start();
 
-// Vérifier la connexion à la base de données
+// Vérifier la connexion à la BDD en utilisant PDO
 include '../includes/inc_Connect.php';
 
 // Vérifier si l'utilisateur est connecté
 if (isset($_SESSION['utilisateur_connecte'])) {
-    // Vérifier si la session est inactive depuis plus de 30 minutes  1800
-    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
-        // La session est inactive depuis trop longtemps, déconnecter l'utilisateur
-        session_unset();  // Supprimer toutes les données de la session
-        session_destroy(); // Détruire la session
-        header("Location: login.php"); // Rediriger vers la page de connexion
-        exit();
-    }
+  // Vérifier si la session est inactive depuis plus de 30 minutes (1800 secondes)
+  if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
+    // La session est inactive depuis trop longtemps, déconnecter l'utilisateur
+    session_unset();  // Supprimer toutes les données de la session
+    session_destroy(); // Détruire la session
+    header("Location: login.php"); // Rediriger vers la page de connexion
+    exit();
+  }
 
-    // Mettre à jour le timestamp de la dernière activité
-    $_SESSION['last_activity'] = time();
+  // Mettre à jour le timestamp de la dernière activité
+  $_SESSION['last_activity'] = time();
 }
 
+// Fermer la connexion à la BDD en utilisant PDO
+$connexion = null; // l'objet PDO est correctement détruit
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -57,15 +61,15 @@ if (isset($_SESSION['utilisateur_connecte'])) {
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li>
-            <a class="navbar-brand" href="index.html">
+            <a class="navbar-brand" href="../index.html">
               <img src="../assets/images/logos/logo1.png" class="logo-image img-fluid" alt="logoamp" />
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="index.html">Revenir au site</a>
+            <a class="nav-link" href="../index.html">Revenir au site</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="a-propos.html">Membres</a>
+            <a class="nav-link" href="membres.php">Membres</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="logout.php"><img src="../assets/images/logos/shut.png" class="logo-image img-fluid" alt="sortie" /></a>

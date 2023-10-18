@@ -1,28 +1,31 @@
 <?php
-// Vérifier la connexion à la bdd
+// Vérifier la connexion à la BDD
 include 'includes/inc_Connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
 
-    // Vérifier si l'e-mail existe dans la base de données
-    $requete = "SELECT * FROM usertable WHERE email = '$email'";
-    $select = mysqli_query($connexion, $requete);
-    $num_rows = mysqli_num_rows($select);
+    // Vérifier si l'e-mail existe dans la BDD en utilisant une requête préparée
+    $requete = "SELECT * FROM usertable WHERE email = :email";
+    $stmt = $connexion->prepare($requete);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($num_rows > 0) {
-        // mail existe, rediriger vers modMail.php pour réinitialiser mdp
+    if ($result) {
+        // E-mail existe, rediriger vers verif_question.php pour réinitialiser le mot de passe
         header("Location: verif_question.php?email=$email");
         exit();
     } else {
-        // mail n'existe pas, message d'erreur
+        // E-mail n'existe pas, afficher un message d'erreur
         $erreur = "Aucun identifiant trouvé.";
     }
 }
 
-// Fermer la connexion à la bdd
-mysqli_close($connexion);
+// Fermer la connexion à la BDD
+$connexion = null;
 ?>
+
 
 
 

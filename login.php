@@ -1,7 +1,7 @@
 <?php
 session_start(); // Démarre la session
 
-// Vérifier la connexion à la base de données
+// Inclure le fichier de connexion PDO
 include 'includes/inc_Connect.php';
 
 $cleChiffrement = 'votre_clé_de_chiffrement'; // Assurez-vous d'utiliser la même clé pour le chiffrement et le décryptage
@@ -16,41 +16,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) { // Vérif
   $password = $_POST['password'];
 
   // Préparez la requête SQL pour rechercher l'utilisateur par email et par rôle
-  $sql = "SELECT * FROM usertable WHERE email = ?";
+  $sql = "SELECT * FROM usertable WHERE email = :email";
 
-  // Utilisez une requête préparée pour éviter les injections SQL
-  if ($stmt = $connexion->prepare($sql)) {
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+  // Utilisez une requête préparée PDO pour éviter les injections SQL
+  $stmt = $connexion->prepare($sql);
+  $stmt->bindParam(':email', $email);
+  $stmt->execute();
+  $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($result->num_rows === 1) {
-      // Utilisateur trouvé, vérifiez le mot de passe
-      $row = $result->fetch_assoc();
-      if (password_verify($password, $row['password'])) {
-        // Mot de passe correct, l'utilisateur est authentifié
-        if ($row['role'] === 'admin') {
-          // L'utilisateur a le rôle "admin", redirigez-le vers la page admin.php
-          header('Location: admin/index.php');
-        } elseif ($row['role'] === 'user') {
-          // L'utilisateur a le rôle "user", redirigez-le vers la page new_page.html
-          header('Location: new_page.html');
-        }
+  if ($row) {
+    // Utilisateur trouvé, vérifiez le mot de passe
+    if (password_verify($password, $row['password'])) {
+      // Mot de passe correct, l'utilisateur est authentifié
+      if ($row['role'] === 'admin') {
+        // L'utilisateur a le rôle "admin", redirigez-le vers la page admin.php
+        header('Location: admin/index.php');
         exit;
-      } else {
-        // Mot de passe incorrect
-        $erreur = 'Identifiants incorrects. Veuillez réessayer.';
+      } elseif ($row['role'] === 'user') {
+        // L'utilisateur a le rôle "user", redirigez-le vers la page new_page.html
+        header('Location: new_page.html');
+        exit;
       }
     } else {
-      // Aucun utilisateur trouvé avec cet email
-      $erreur = 'Utilisateur non trouvé. Veuillez vérifier vos identifiants.';
+      // Mot de passe incorrect
+      $erreur = 'Identifiants incorrects. Veuillez réessayer.';
     }
-    $stmt->close();
+  } else {
+    // Aucun utilisateur trouvé avec cet email
+    $erreur = 'Utilisateur non trouvé. Veuillez vérifier vos identifiants.';
   }
-
-  // Fermer la connexion à la base de données
-  $connexion->close();
 }
+
+// Fermer la connexion à la BDD
+$connexion = null;
 ?>
 
 <!DOCTYPE html>
@@ -90,12 +88,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) { // Vérif
 
           <div class="page email-page">
             <div class="input-box">
-              <input type="text" class="email" name="email" autofocus autocomplete="off" autocomplete="new-email" value="" required />
+              <input type="text" class="email" name="email" autofocus autocomplete="off" required />
               <label>Entrez votre email</label>
             </div>
 
             <div class="input-box">
-              <input type="password" class="password" name="password" id="passLog" autocomplete="off" autocomplete="new-password" value="" required />
+              <input type="password" class="password" name="password" id="passLog" autocomplete="off" required />
               <img src="assets/images/logos/redEye.png" id="eyepassLog" onClick="changer('passLog')" />
               <label for="password">Mot de passe</label>
             </div>

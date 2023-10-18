@@ -6,14 +6,9 @@
 
 <body>
   <?php
-  $server = 'localhost';
-  $database = 'userform';
-  $user = 'root';
-  $mdp = '';
-  $connexion = mysqli_connect($server, $user, $mdp, $database);
-  if ($connexion->connect_error) {
-    die("La connexion a échoué: <br>" . $connexion->connect_error);
-  } else echo "Connecté avec succès<br>";
+
+  // Vérifier la connexion à la BDD
+  include 'inc_Connect.php';
 
 
   ?>

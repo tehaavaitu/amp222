@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -11,13 +12,13 @@
   $user = 'root';
   $mdp = '';
 
-  $connexion = new mysqli($server, $user, $mdp, $database);
-  
-  if ($connexion->connect_error) {
-    die("La connexion a échoué: <br>" . $connexion->connect_error);
+  try {
+    $connexion = new PDO("mysql:host=$server;dbname=$database", $user, $mdp);
+    $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Connecté avec succès<br>";
+  } catch (PDOException $e) {
+    echo "La connexion a échoué: " . $e->getMessage();
   }
-
-
   ?>
 </body>
 

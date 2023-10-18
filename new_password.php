@@ -13,29 +13,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($pass1 === $pass2) {
         if (strlen($pass1) >= 8) {
             // Requêtes préparées pour éviter les injections SQL
-            $stmt = $connexion->prepare("SELECT * FROM usertable WHERE email = ?");
-            $stmt->bind_param("s", $email);
+            $stmt = $connexion->prepare("SELECT * FROM usertable WHERE email = :email");
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
 
             if ($stmt->execute()) {
-                $result = $stmt->get_result();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                if ($result->num_rows === 1) {
+                if ($result) {
                     // L'utilisateur existe, mettre à jour le mot de passe
                     $hashedPassword = password_hash($pass1, PASSWORD_DEFAULT);
-                    $stmt = $connexion->prepare("UPDATE usertable SET password = ? WHERE email = ?");
-                    $stmt->bind_param("ss", $hashedPassword, $email);
+                    $stmt = $connexion->prepare("UPDATE usertable SET password = :password WHERE email = :email");
+                    $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+                    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
 
                     if ($stmt->execute()) {
                         header("Location: login.php?email=$email");
                         exit;
                     } else {
-                        echo "Erreur lors de la mise à jour du mot de passe : " . $stmt->error;
+                        echo "Erreur lors de la mise à jour du mot de passe : " . $stmt->errorInfo();
                     }
                 } else {
                     echo "Aucun utilisateur trouvé avec cet email.";
                 }
             } else {
-                echo "Erreur lors de l'exécution de la requête : " . $stmt->error;
+                echo "Erreur lors de l'exécution de la requête : " . $stmt->errorInfo();
             }
         } else {
             echo "Le mot de passe doit contenir au moins 8 caractères.";
@@ -47,8 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fermer la connexion à la bdd
-mysqli_close($connexion);
+$connexion = null;
 ?>
+
 
 
 <!DOCTYPE html>

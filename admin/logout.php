@@ -1,6 +1,15 @@
 <?php
 session_start();
-session_unset();
+
+// Inclure le fichier de connexion PDO
+include '../includes/inc_Connect.php';
+
+// Supprimer toutes les variables de session
+$_SESSION = array();
+
+// Détruire la session
 session_destroy();
-header('location: ../login.php');
+
+// Rediriger vers la page de connexion
+header('Location: ../login.php');
 ?>

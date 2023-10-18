@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Vérifier la connexion à la base de données
+// Vérifier la connexion à la BDD
 include 'includes/inc_Connect.php';
 
 $email = '';
@@ -13,15 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$email) {
         echo '<div>L\'adresse e-mail n\'est pas valide.</div>';
     } else {
-        // Vérifier si l'e-mail existe dans la base de données
-        $requete = "SELECT * FROM usertable WHERE email = ?";
-        $stmt = mysqli_prepare($connexion, $requete);
-        mysqli_stmt_bind_param($stmt, "s", $email);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $num_rows = mysqli_num_rows($result);
+        // Vérifier si l'e-mail existe dans la BDD
+        $requete = "SELECT * FROM usertable WHERE email = :email";
+        $stmt = $connexion->prepare($requete);
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($num_rows > 0) {
+        if ($result) {
             // E-mail existe, afficher le formulaire de question réponse
 ?>
             <!DOCTYPE html>
@@ -61,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </head>
 
             <body>
-                <!-- formulaire question reponse-->
-                <div class="container" class="formQuestion">
+                <!-- formulaire question réponse -->
+                <div class="container">
                     <div class="login-box">
                         <div id="reset-form">
                             <form action="verif_question.php" method="POST">
@@ -70,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <img src="assets/images/logos/logo1.png" alt="Logo de l'association" class="association-logo">
                                 </a>
                                 <h2 class="loginTitle-text">Verification de votre réponse</h2>
-
                                 <div class="input-box">
                                     <input type="hidden" name="email" value="<?php echo $email; ?>">
                                     <select name="question" class="select-field" required>
@@ -86,33 +84,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <a href="login.php">Annuler</a>
                                     <button type="submit" class="btn-next" name="verify_answer">Vérifier</button>
                                 </div>
+                            </form>
                         </div>
-                        </form>
                     </div>
                 </div>
-                </div>
-
                 <script src="assets/js/script.js"></script>
-
             </body>
 
             </html>
-
 <?php
             // Vérifier le formulaire de question réponse
             if (isset($_POST['question']) && isset($_POST['reponse'])) {
                 $question = $_POST['question'];
                 $reponse = $_POST['reponse'];
 
-                // Vérifier la question et la réponse dans la base de données
-                $requete = "SELECT * FROM usertable WHERE email = ? AND question = ? AND reponse = ?";
-                $stmt = mysqli_prepare($connexion, $requete);
-                mysqli_stmt_bind_param($stmt, "sss", $email, $question, $reponse);
-                mysqli_stmt_execute($stmt);
-                $result = mysqli_stmt_get_result($stmt);
-                $num_rows = mysqli_num_rows($result);
+                // Vérifier la question et la réponse dans la BDD
+                $requete = "SELECT * FROM usertable WHERE email = :email AND question = :question AND reponse = :reponse";
+                $stmt = $connexion->prepare($requete);
+                $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+                $stmt->bindParam(':question', $question, PDO::PARAM_INT);
+                $stmt->bindParam(':reponse', $reponse, PDO::PARAM_STR);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                if ($num_rows > 0) {
+                if ($result) {
                     // Question et réponse correctes, rediriger vers la page de réinitialisation du mot de passe
                     header("Location: new_password.php?email=" . urlencode($email));
                     exit;
@@ -128,6 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fermer la connexion à la base de données
-mysqli_close($connexion);
+// Fermer la connexion à la BDD
+$connexion = null;
 ?>

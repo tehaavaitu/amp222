@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin'])) {
     exit();
 }
 
-// Inclure le fichier de configuration de la base de données
+// Inclure le fichier de configuration de la BDD
 include('db_config.php');
 
 // Traitement du formulaire de modification de l'image
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newImagePath = $_POST['new_image_path'];
     $newAltText = $_POST['new_alt_text'];
 
-    // Effectuez la mise à jour dans la base de données (vous devrez écrire cette partie)
+    // Effectuez la mise à jour dans la BDD (vous devrez écrire cette partie)
     // Assurez-vous de valider et de sécuriser les données avant de les utiliser dans une requête SQL.
 
     // Après la mise à jour, redirigez l'administrateur vers une page de confirmation ou de gestion.
@@ -25,10 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Modifier le Contenu</title>
     <!-- Ajoutez ici des liens vers des fichiers CSS -->
 </head>
+
 <body>
     <h1>Modifier le Contenu de l'Actualité</h1>
     <form method="post" action="">
@@ -51,4 +53,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Enregistrer les modifications</button>
     </form>
 </body>
+
 </html>
