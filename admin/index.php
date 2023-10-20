@@ -72,8 +72,10 @@ $connexion = null; // l'objet PDO est correctement détruit
             <a class="nav-link" href="membres.php">Membres</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="logout.php"><img src="../assets/images/logos/shut.png" class="logo-image img-fluid" alt="sortie" /></a>
-          </li>
+                    <a class="nav-link" href="logout.php">
+                        <i class="bi bi-box-arrow-right"></i> Se déconnecter
+                    </a>
+                </li>
 
         </ul>
       </div>
