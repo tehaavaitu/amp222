@@ -439,7 +439,7 @@ main {
 }
 
 /*  BANNIERE des differentes pages  */
-.banniere .animated1, .banniere1 .animated1, .banniere2 .animated1, .banniere3 .animated1, .banniere4 .animated1, .banniere5 .animated1, .banniere6 .animated1 {
+.banniere .animated1, .banniere1 .animated1, .banniere2 .animated1, .banniere3 .animated1, .banniere4 .animated1, .banniere5 .animated1, .banniere6 .animated1, .banniere7 .animated1 {
   margin-top: 80px;
   background-color: rgba(38, 30, 117, 0.5); 
   -webkit-background-clip: text;
@@ -447,7 +447,7 @@ main {
   font-family: 'Arial', sans-serif;
 }
 
-.banniere .animated2, .banniere1 .animated2, .banniere2 .animated2, .banniere3 .animated2, .banniere4 .animated2, .banniere5 .animated2, .banniere6 .animated2 {
+.banniere .animated2, .banniere1 .animated2, .banniere2 .animated2, .banniere3 .animated2, .banniere4 .animated2, .banniere5 .animated2, .banniere6 .animated2, .banniere7 .animated2 {
   background-color: rgba(0, 0, 0, 0.5); 
   color: #fff;
   padding: 10px 20px;
@@ -455,74 +455,45 @@ main {
   display: inline-block; 
 }
 
-.banniere {
+.banniere, .banniere1, .banniere2, .banniere3, .banniere4, .banniere5, .banniere6, .banniere7 {
   position: relative;
-  background-image: url('../images/port/port12.png'), linear-gradient(#348CD2, #FFFFFF);
   background-repeat: no-repeat;
   background-size: 100%;
   background-position: top;
   padding-top: 10px;
   height: 100vh;
+}
+
+.banniere {
+  background-image: url('../images/port/port12.png'), linear-gradient(#348CD2, #FFFFFF);
 }
 
 .banniere1 {
-  position: relative;
   background-image: url('../images/port/port6.png'), linear-gradient(#348CD2, #FFFFFF);
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: top;
-  padding-top: 10px;
-  height: 100vh;
 }
 
 .banniere2 {
-  position: relative;
-  background-image: url('../images/port/port7.png'), linear-gradient(#348CD2, #FFFFFF);
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: top;
-  padding-top: 10px;
-  height: 100vh;
+  background-image: url('../images/port/port10.png'), linear-gradient(#348CD2, #FFFFFF);
 }
 
 .banniere3 {
-  position: relative;
-  background-image: url('../images/port/port10.png'), linear-gradient(#348CD2, #FFFFFF);
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: top;
-  padding-top: 10px;
-  height: 100vh;
+  background-image: url('../images/port/port7.png'), linear-gradient(#348CD2, #FFFFFF);
 }
 
 .banniere4 {
-  position: relative;
   background-image: url('../images/port/port11.png'), linear-gradient(#348CD2, #FFFFFF);
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: top;
-  padding-top: 10px;
-  height: 100vh;
 }
 
 .banniere5 {
-  position: relative;
   background-image: url('../images/port/port13.png'), linear-gradient(#348CD2, #FFFFFF);
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: top;
-  padding-top: 10px;
-  height: 70vh;
 }
 
 .banniere6 {
-  position: relative;
   background-image: url('../images/port/port9.png'), linear-gradient(#348CD2, #FFFFFF);
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: top;
-  padding-top: 10px;
-  height: 100vh;
+}
+
+.banniere7 {
+  background-image: url('../images/port/port5.png'), linear-gradient(#348CD2, #FFFFFF);
 }
 
 .custom-carousel {
@@ -1058,6 +1029,26 @@ border-radius: 15px;}
 
 .appel-action4 {
   background: url(../images/parallax/bg-02.jpg);
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: 50% 90%;
+  color: #fff;
+  text-align: center;
+  padding: 80px 0;
+}
+
+.appel-action5 {
+  background: url(../images/parallax/bg-08.png);
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: 50% 90%;
+  color: #fff;
+  text-align: center;
+  padding: 80px 0;
+}
+
+.appel-action6 {
+  background: url(../images/parallax/bg-07.jpg);
   background-attachment: fixed;
   background-size: cover;
   background-position: 50% 90%;
