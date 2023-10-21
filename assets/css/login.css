@@ -73,13 +73,14 @@ body {
 
 .page-box .login-title {
     text-align: center;
-    color: #fff;
-    margin-bottom: 40px;
+    color: #f6efef;
+    margin-bottom: 30px;
 }
 
 .login-title h2 {
     font-size: 32px;
     line-height: 1.5;
+    color: #f6efef;
 }
 
 .login-title p {

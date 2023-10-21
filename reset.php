@@ -87,7 +87,7 @@ $connexion = null;
         </div>
     </div>
 
-    <script src="assets/js/script.js"></script>
+    <script src="assets/js/vuemdp.js"></script>
 </body>
 
 </html>

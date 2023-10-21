@@ -5,13 +5,14 @@ session_start();
 include 'includes/inc_Connect.php';
 
 $email = '';
+$erreur = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Valider et nettoyer l'e-mail entré par l'utilisateur
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
 
     if (!$email) {
-        echo '<div>L\'adresse e-mail n\'est pas valide.</div>';
+        $erreur = 'L\'adresse e-mail n\'est pas valide.';
     } else {
         // Vérifier si l'e-mail existe dans la BDD
         $requete = "SELECT * FROM usertable WHERE email = :email";
@@ -63,12 +64,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- formulaire question réponse -->
                 <div class="container">
                     <div class="login-box">
-                        <div id="reset-form">
+                        
                             <form action="verif_question.php" method="POST">
                                 <a href="index.html">
                                     <img src="assets/images/logos/logo1.png" alt="Logo de l'association" class="association-logo">
                                 </a>
                                 <h2 class="loginTitle-text">Verification de votre réponse</h2>
+                                <?php if (!empty($erreur)) : ?>
+                                    <p style="color: red;"><?php echo $erreur; ?></p>
+                                <?php endif; ?>
                                 <div class="input-box">
                                     <input type="hidden" name="email" value="<?php echo $email; ?>">
                                     <select name="question" class="select-field" required>
@@ -85,10 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <button type="submit" class="btn-next" name="verify_answer">Vérifier</button>
                                 </div>
                             </form>
-                        </div>
+                       
                     </div>
                 </div>
-                <script src="assets/js/script.js"></script>
+                <script src="assets/js/vuemdp.js"></script>
             </body>
 
             </html>
@@ -118,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } else {
             // E-mail n'existe pas, afficher un message d'erreur
-            echo '<div>L\'adresse e-mail renseignée n\'existe pas.</div>';
+            echo 'L\'adresse e-mail renseignée n\'existe pas.';
         }
     }
 }

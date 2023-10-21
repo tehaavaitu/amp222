@@ -4,46 +4,48 @@ include 'includes/inc_Connect.php';
 
 $email = isset($_GET['email']) ? urldecode($_GET['email']) : '';
 
+$errorEmail = '';
+$errorPassword = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Récupérer données du formulaire
     $email = $_POST['email'];
     $pass1 = $_POST['pass1'];
     $pass2 = $_POST['pass2'];
 
-    if ($pass1 === $pass2) {
-        if (strlen($pass1) >= 8) {
-            // Requêtes préparées pour éviter les injections SQL
-            $stmt = $connexion->prepare("SELECT * FROM usertable WHERE email = :email");
-            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $errorPassword = ''; // Initialisation du message d'erreur
 
-            if ($stmt->execute()) {
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($pass1 !== $pass2) {
+        $errorPassword = "Les mots de passe ne correspondent pas.";
+    } elseif (strlen($pass1) < 8) {
+        $errorPassword = "Le mot de passe doit contenir au moins 8 caractères.";
+    } else {
+        // Requêtes préparées pour éviter les injections SQL
+        $stmt = $connexion->prepare("SELECT * FROM usertable WHERE email = :email");
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
 
-                if ($result) {
-                    // L'utilisateur existe, mettre à jour le mot de passe
-                    $hashedPassword = password_hash($pass1, PASSWORD_DEFAULT);
-                    $stmt = $connexion->prepare("UPDATE usertable SET password = :password WHERE email = :email");
-                    $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
-                    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                    if ($stmt->execute()) {
-                        header("Location: login.php?email=$email");
-                        exit;
-                    } else {
-                        echo "Erreur lors de la mise à jour du mot de passe : " . $stmt->errorInfo();
-                    }
-                } else {
-                    echo "Aucun utilisateur trouvé avec cet email.";
-                }
+            if (!$result) {
+                $errorEmail = "Aucun utilisateur trouvé avec cet email.";
             } else {
-                echo "Erreur lors de l'exécution de la requête : " . $stmt->errorInfo();
+                // L'utilisateur existe, mettre à jour le mot de passe
+                $hashedPassword = password_hash($pass1, PASSWORD_DEFAULT);
+                $stmt = $connexion->prepare("UPDATE usertable SET password = :password WHERE email = :email");
+                $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+                $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+
+                if ($stmt->execute()) {
+                    header("Location: login.php?email=$email");
+                    exit;
+                } else {
+                    $errorPassword = "Erreur lors de la mise à jour du mot de passe : " . implode(', ', $stmt->errorInfo());
+                }
             }
         } else {
-            echo "Le mot de passe doit contenir au moins 8 caractères.";
-            echo '<style>.formPass {display: block;}</style>';
+            $errorPassword = "Erreur lors de l'exécution de la requête : " . implode(', ', $stmt->errorInfo());
         }
-    } else {
-        echo "Les mots de passe ne correspondent pas.";
     }
 }
 
@@ -88,7 +90,7 @@ $connexion = null;
                     <img src="assets/images/logos/logo1.png" alt="Logo de l'association" class="association-logo">
                 </a>
                 <h2 class="loginTitle-text">Récupération de compte</h2>
-
+                <span><p style="color: red;"><?php echo $errorPassword; ?></p></span>
                 <div class="page email-page">
                     <div class="input-box">
                         <input type="hidden" name="email" value="<?php echo $email; ?>">
@@ -112,7 +114,7 @@ $connexion = null;
         </div>
     </div>
 
-    <script src="assets/js/script.js"></script>
+    <script src="assets/js/vuemdp.js"></script>
 
 </body>
 

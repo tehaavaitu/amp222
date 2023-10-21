@@ -84,6 +84,7 @@ $connexion = null;
 
             <h2 class="loginTitle-text">Connexion</h2>
             <p class="user-email">Connectez-vous sur notre plateforme</p>
+            <span><p style="color: red;"><?php echo $erreur; ?></p></span>
           </div>
 
           <div class="page email-page">
@@ -112,7 +113,7 @@ $connexion = null;
     </div>
   </div>
 
-  <script src="assets/js/script.js"></script>
+  <script src="assets/js/vuemdp.js"></script>
 </body>
 
 </html>
