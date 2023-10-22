@@ -8,7 +8,7 @@
 <body>
   <?php
   $server = 'localhost';
-  $database = 'userform';
+  $database = 'dbamp';
   $user = 'root';
   $mdp = '';
 
